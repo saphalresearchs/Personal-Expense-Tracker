@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, ExpenseSerializer, ExpenseCategorySerializer
 from .models import Expense, ExpenseCategory
 from rest_framework.permissions import AllowAny
+from django.db.models.functions import TruncMonth
+from django.db.models import Q
+from datetime import datetime
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -20,7 +23,25 @@ class ExpenseListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Expense.objects.filter(user=self.request.user).order_by('-date')
+        user = self.request.user
+        queryset = Expense.objects.filter(user=user)
+
+        category = self.request.GET.get('category')
+        month = self.request.GET.get('month')  # format: YYYY-MM
+
+        if category:
+            queryset = queryset.filter(category__name=category)
+
+        if month:
+            try:
+                dt = datetime.strptime(month, "%Y-%m")
+                queryset = queryset.filter(date__year=dt.year, date__month=dt.month)
+            except:
+                pass  # Ignore bad format
+
+        return queryset.order_by('-date')
+    
+
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
