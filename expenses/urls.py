@@ -17,4 +17,5 @@ urlpatterns = [
 
     # Categories
     path('categories/', views.CategoryListView.as_view(), name='category_list'),
+    #path('logout/', views.LogoutView.as_view(), name='auth_logout'),
 ]

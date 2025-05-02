@@ -2,10 +2,14 @@ from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, ExpenseSerializer, ExpenseCategorySerializer
 from .models import Expense, ExpenseCategory
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db.models.functions import TruncMonth
 from django.db.models import Q
 from datetime import datetime
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()

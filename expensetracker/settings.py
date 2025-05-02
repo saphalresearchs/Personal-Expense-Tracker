@@ -135,3 +135,8 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
 ]
+
+# SIMPLE_JWT = {
+#     'BLACKLIST_AFTER_ROTATION': True,
+#     'ROTATE_REFRESH_TOKENS': True,
+# }

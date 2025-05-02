@@ -20,9 +20,38 @@ document.addEventListener('DOMContentLoaded', function() {
         loadData();
     });
 
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
+    }
+    });
+
+    async function logout() {
+    const refresh = localStorage.getItem("refresh");
+
+    if (refresh) {
+        try {
+        await fetch(`${BASE_URL}/logout/`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("access")}`
+            },
+            body: JSON.stringify({ refresh: refresh })
+        });
+        } catch (err) {
+        console.error("Logout error:", err);
+        }
+    }
+
+    // Clean up tokens no matter what
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    window.location.href = "login.html";
+
     // Load data sequentially
     //loadData();
-});
+};
 
 function formatNPR(amount) {
     return new Intl.NumberFormat('ne-NP', {
@@ -192,7 +221,7 @@ async function fetchExpenses(url = 'http://127.0.0.1:8000/api/expenses/') {
         throw new Error('Failed to fetch expenses');
     }
     return await response.json();
-}
+}   
 
 function updateUI(expenses) {
     updateSummaryCards(expenses);
